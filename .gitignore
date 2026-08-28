@@ -1,0 +1,6 @@
+*.session
+sessions/
+__pycache__/
+*.pyc
+.env
+database.json
