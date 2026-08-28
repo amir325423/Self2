@@ -15,9 +15,8 @@ os.makedirs("sessions", exist_ok=True)
 
 # لیست کانال ها کم یا زیاد میتونید کنید بدون @
 FORCE_CHANNELS = [
-    "00000",
-    "00000",
-    "00000"
+    "@SH0PAL1",
+    
 ]
 
 
