@@ -1,6 +1,6 @@
-pyrogrammod
+pyrogrammod>=2.4.0
 tgcrypto
-python-telegram-bot
+python-telegram-bot>=22.7
 requests
 aiohttp
 pytz
