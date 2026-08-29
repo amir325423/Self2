@@ -7,15 +7,15 @@ from pyrogram import enums
 
 user_temp_codes = {}
 active_clients = {}
-BOT_TOKEN = "00000"
-API_ID = 00000
-API_HASH = "00000"
-ADMIN_ID = 000000
+BOT_TOKEN = "8674957786:AAHcKmPkUhR630w5pmkrifnxO9Yf8SCuVm"
+API_ID = 35656061
+API_HASH = "b37f2596516bc0439bf505d1d230395c"
+ADMIN_ID = 7845464086
 
 # تنظیمات منوی جدید
 # یوزرنیم‌ها را بدون @ وارد کنید
-SUPPORT_USERNAME = "YourSupportUsername"
-BUY_CHANNEL_USERNAME = "YourChannelUsername"
+SUPPORT_USERNAME = "Aliconfigs"
+BUY_CHANNEL_USERNAME = "SelfPersiangulf"
 HELPER_BOT_USERNAME = "Helpselfbotvippersian_bot"
 
 os.makedirs("sessions", exist_ok=True)
@@ -30,9 +30,9 @@ FORCE_CHANNELS = [
 COIN_RATE = 1440  # 1440 سکه = 50,000 تومان
 TOMAN_PER_COIN = 50000 / 1440
 card_info = {
-                "card_number": "6037-1234-1234-1234",
-                "card_owner": "نام صاحب کارت",
-                "bank_name": "نام بانک"
+                "card_number": "6277601405245190",
+                "card_owner": "زارعان",
+                "bank_name": "پست بانک"
             }
 
 bot = Client("bot", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
