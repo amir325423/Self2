@@ -7,32 +7,33 @@ from pyrogram import enums
 
 user_temp_codes = {}
 active_clients = {}
-BOT_TOKEN = "8674957786:AAHcKmPkUhR630w5pmkrifnxO9Yf8SCuVm"
-API_ID = 35656061
-API_HASH = "b37f2596516bc0439bf505d1d230395c"
-ADMIN_ID = 7845464086
+BOT_TOKEN = "00000"
+API_ID = 00000
+API_HASH = "00000"
+ADMIN_ID = 000000
 
 # تنظیمات منوی جدید
 # یوزرنیم‌ها را بدون @ وارد کنید
-SUPPORT_USERNAME = "Aliconfigs"
-BUY_CHANNEL_USERNAME = "SelfPersiangulf"
+SUPPORT_USERNAME = "YourSupportUsername"
+BUY_CHANNEL_USERNAME = "YourChannelUsername"
 HELPER_BOT_USERNAME = "Helpselfbotvippersian_bot"
 
 os.makedirs("sessions", exist_ok=True)
 
 # لیست کانال ها کم یا زیاد میتونید کنید بدون @
 FORCE_CHANNELS = [
-    "SH0PAL1",
- 
+    "00000",
+    "00000",
+    "00000"
 ]
 
 
 COIN_RATE = 1440  # 1440 سکه = 50,000 تومان
 TOMAN_PER_COIN = 50000 / 1440
 card_info = {
-                "card_number": "6277601405245190",
-                "card_owner": "زارعان",
-                "bank_name": "پست بانک"
+                "card_number": "6037-1234-1234-1234",
+                "card_owner": "نام صاحب کارت",
+                "bank_name": "نام بانک"
             }
 
 bot = Client("bot", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
@@ -1816,6 +1817,7 @@ async def handle_admin_input(client, message: Message):
         except: pass
 @bot.on_message(filters.command("start"))
 async def start_handler(client, message: Message):
+    print(f"🔥 START RECEIVED from user_id={message.from_user.id}", flush=True)
     ok, not_joined = await check_force_join(client, message.from_user.id)
     if not ok:
         buttons = []
