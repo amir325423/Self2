@@ -1,4 +1,4 @@
-pyrogram
+pyrogrammod
 tgcrypto
 python-telegram-bot
 requests
