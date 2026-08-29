@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButtonStyle
 from pyrogram.errors import SessionPasswordNeeded
 import json, os, asyncio, subprocess, sys, time, threading
 import html
@@ -7,16 +7,23 @@ from pyrogram import enums
 
 user_temp_codes = {}
 active_clients = {}
-BOT_TOKEN = "8674957786:AAHcKmPkUhR630w5pmkrifnxO9Yf8SCuVmA"
-API_ID = 35656061
-API_HASH = "b37f2596516bc0439bf505d1d230395c"
-ADMIN_ID = 7845464086
+BOT_TOKEN = "00000"
+API_ID = 00000
+API_HASH = "00000"
+ADMIN_ID = 000000
+
+# تنظیمات منوی جدید
+# یوزرنیم‌ها را بدون @ وارد کنید
+SUPPORT_USERNAME = "YourSupportUsername"
+BUY_CHANNEL_USERNAME = "YourChannelUsername"
+HELPER_BOT_USERNAME = "Helpselfbotvippersian_bot"
+
 os.makedirs("sessions", exist_ok=True)
 
 # لیست کانال ها کم یا زیاد میتونید کنید بدون @
 FORCE_CHANNELS = [
     "SH0PAL1",
-    
+ 
 ]
 
 
@@ -1313,10 +1320,145 @@ async def admin_panel(client, message: Message):
     ])
     
     await message.reply_text(stats_text, reply_markup=keyboard)
+def create_main_menu(user_id):
+    """منوی اصلی رنگی ربات."""
+    return InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(
+                "🛒 خرید سلف",
+                callback_data="increase_balance",
+                style=KeyboardButtonStyle(bg_success=True)
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "👤 حساب کاربری",
+                callback_data="status_credits",
+                style=KeyboardButtonStyle(bg_primary=True)
+            ),
+            InlineKeyboardButton(
+                "👥 زیرمجموعه",
+                callback_data="referral",
+                style=KeyboardButtonStyle(bg_primary=True)
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "👨‍💻 پشتیبانی",
+                callback_data="support",
+                style=KeyboardButtonStyle(bg_success=True)
+            ),
+            InlineKeyboardButton(
+                "⚙️ مدیریت بات",
+                callback_data="self_management",
+                style=KeyboardButtonStyle(bg_primary=True)
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📣 کانال خرید",
+                callback_data="buy_channel",
+                style=KeyboardButtonStyle(bg_success=True)
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📢 راهنما",
+                callback_data="help",
+                style=KeyboardButtonStyle(bg_danger=True)
+            )
+        ]
+    ])
+
+
 @bot.on_callback_query()
 async def callback_handler(client, callback_query):
     user_id = callback_query.from_user.id
     data = callback_query.data
+
+    # ==============================
+    # زیرمجموعه
+    # ==============================
+    if data == "referral":
+        bot_info = await client.get_me()
+        referral_link = f"https://t.me/{bot_info.username}?start=ref_{user_id}"
+
+        referral_text = (
+            "👥 **سیستم زیرمجموعه**\n\n"
+            "با لینک اختصاصی خود دوستانتان را به ربات دعوت کنید.\n\n"
+            f"🔗 **لینک دعوت شما:**\n`{referral_link}`\n\n"
+            "📊 تعداد زیرمجموعه‌های شما در نسخه فعلی هنوز ذخیره نمی‌شود."
+        )
+
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
+        ])
+
+        await callback_query.message.edit_text(referral_text, reply_markup=keyboard)
+        await callback_query.answer()
+        return
+
+    # ==============================
+    # پشتیبانی
+    # ==============================
+    if data == "support":
+        if not SUPPORT_USERNAME or SUPPORT_USERNAME == "YourSupportUsername":
+            await callback_query.answer("⚠️ یوزرنیم پشتیبانی هنوز تنظیم نشده است.", show_alert=True)
+            return
+
+        support_text = (
+            "👨‍💻 **پشتیبانی**\n\n"
+            "برای ارتباط با پشتیبانی روی دکمه زیر کلیک کنید."
+        )
+
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("💬 ارتباط با پشتیبانی", url=f"https://t.me/{SUPPORT_USERNAME}", style=KeyboardButtonStyle(bg_success=True))],
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
+        ])
+
+        await callback_query.message.edit_text(support_text, reply_markup=keyboard)
+        await callback_query.answer()
+        return
+
+    # ==============================
+    # کانال خرید
+    # ==============================
+    if data == "buy_channel":
+        if not BUY_CHANNEL_USERNAME or BUY_CHANNEL_USERNAME == "YourChannelUsername":
+            await callback_query.answer("⚠️ یوزرنیم کانال خرید هنوز تنظیم نشده است.", show_alert=True)
+            return
+
+        channel_text = (
+            "📣 **کانال خرید**\n\n"
+            "برای مشاهده اطلاعات خرید و اطلاعیه‌ها وارد کانال شوید."
+        )
+
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📣 ورود به کانال", url=f"https://t.me/{BUY_CHANNEL_USERNAME}", style=KeyboardButtonStyle(bg_success=True))],
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
+        ])
+
+        await callback_query.message.edit_text(channel_text, reply_markup=keyboard)
+        await callback_query.answer()
+        return
+
+    # ==============================
+    # راهنما
+    # ==============================
+    if data == "help":
+        help_text = (
+            "📢 **راهنمای سلف بات**\n\n"
+            "برای مشاهده راهنمای کامل دستورات و امکانات، وارد ربات هلپر شوید."
+        )
+
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📖 ورود به ربات راهنما", url=f"https://t.me/{HELPER_BOT_USERNAME}", style=KeyboardButtonStyle(bg_primary=True))],
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
+        ])
+
+        await callback_query.message.edit_text(help_text, reply_markup=keyboard)
+        await callback_query.answer()
+        return
     
     if data.startswith("joinbet_"):
         if data == "joinbet_waiting":
@@ -1634,17 +1776,7 @@ async def callback_handler(client, callback_query):
             if user_data.get('verified'):
                 verified_status = "✅ احراز شده"
             
-            keyboard = InlineKeyboardMarkup([
-                [InlineKeyboardButton("● فعالسازی ●", callback_data="login")],
-                [
-                    InlineKeyboardButton("● حساب کاربری ●", callback_data="status_credits"),
-                    InlineKeyboardButton("● شرطبندی ●", callback_data="bet")
-                ],
-                [
-                    InlineKeyboardButton("● مدیریت سلف ●", callback_data="self_management"),
-                    InlineKeyboardButton("● افزایش موجودی ●", callback_data="increase_balance")
-                ]
-            ])
+            keyboard = create_main_menu(user_id)
             
             text = f"🤖 **ربات مدیریت سلف بات**\n\n**وضعیت:** {status_text}{phone_text}\n**🔐 احراز:** {verified_status}\n**💰 سکه ها:** `{credits}` سکه\n**⏰ مصرف:** 1 سکه در ساعت"
             
@@ -1732,17 +1864,7 @@ async def start_handler(client, message: Message):
     phone = user_data.get('phone', '')
     verified_status = "✅ احراز شده" if user_data.get('verified') else "❌ احراز نشده"
     
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("● فعالسازی ●", callback_data="login")],
-        [
-            InlineKeyboardButton("● حساب کاربری ●", callback_data="status_credits"),
-            InlineKeyboardButton("● شرطبندی ●", callback_data="bet")
-        ],
-        [
-            InlineKeyboardButton("● مدیریت سلف ●", callback_data="self_management"),  
-            InlineKeyboardButton("● افزایش موجودی ●", callback_data="increase_balance")
-        ]
-    ])
+    keyboard = create_main_menu(user_id)
     
     welcome_text = f"""**🌺 به ربات سلف ساز خوش آمدید!**
 
