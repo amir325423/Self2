@@ -1,40 +1,13 @@
-from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-try:
-    from pyrogram.types import KeyboardButtonStyle
-    STYLED_BUTTONS_SUPPORTED = True
-except ImportError:
-    KeyboardButtonStyle = None
-    STYLED_BUTTONS_SUPPORTED = False
+rom pyrogram import Client, filters
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButtonStyle
 from pyrogram.errors import SessionPasswordNeeded
-import json, os, asyncio, subprocess, sys, time, threading, traceback
-
-
-def styled_button(text, *, callback_data=None, url=None, style=None, **kwargs):
-    """رنگ دکمه در صورت پشتیبانی؛ در غیر این صورت بدون کرش دکمه معمولی."""
-    params = {"text": text, **kwargs}
-    if callback_data is not None:
-        params["callback_data"] = callback_data
-    if url is not None:
-        params["url"] = url
-    if STYLED_BUTTONS_SUPPORTED and style:
-        try:
-            if style == "primary":
-                params["style"] = KeyboardButtonStyle(bg_primary=True)
-            elif style == "success":
-                params["style"] = KeyboardButtonStyle(bg_success=True)
-            elif style == "danger":
-                params["style"] = KeyboardButtonStyle(bg_danger=True)
-            return InlineKeyboardButton(**params)
-        except Exception:
-            params.pop("style", None)
-    return InlineKeyboardButton(**params)
+import json, os, asyncio, subprocess, sys, time, threading
 import html
 from pyrogram import enums
 
 user_temp_codes = {}
 active_clients = {}
-BOT_TOKEN = "8778279581:AAHbHoiTGq1D7lMw8IgOEqloVTyBueLQMHs"
+BOT_TOKEN = "8674957786:AAHcKmPkUhR630w5pmkrifnxO9Yf8SCuVm"
 API_ID = 35656061
 API_HASH = "b37f2596516bc0439bf505d1d230395c"
 ADMIN_ID = 7845464086
@@ -1348,19 +1321,75 @@ async def admin_panel(client, message: Message):
     
     await message.reply_text(stats_text, reply_markup=keyboard)
 def create_main_menu(user_id):
-    """منوی اصلی؛ رنگ‌ها فقط در صورت پشتیبانی کتابخانه اعمال می‌شوند."""
+    """منوی اصلی رنگی با چیدمان مطابق تصویر."""
     return InlineKeyboardMarkup([
-        [styled_button("🛒 خرید سلف", callback_data="increase_balance", style="success")],
+        # ردیف 1: خرید سلف
         [
-            styled_button("👤 حساب کاربری", callback_data="status_credits", style="primary"),
-            styled_button("👥 زیرمجموعه", callback_data="referral", style="primary")
+            InlineKeyboardButton(
+                "🛒 خرید سلف",
+                callback_data="increase_balance",
+                style=KeyboardButtonStyle(bg_success=True)
+            )
         ],
+
+        # ردیف 2: حساب کاربری | دعوت دوستان
         [
-            styled_button("👨‍💻 پشتیبانی", callback_data="support", style="success"),
-            styled_button("⚙️ مدیریت بات", callback_data="self_management", style="primary")
+            InlineKeyboardButton(
+                "👤 حساب کاربری",
+                callback_data="status_credits",
+                style=KeyboardButtonStyle(bg_primary=True)
+            ),
+            InlineKeyboardButton(
+                "👥 دعوت دوستان",
+                callback_data="referral",
+                style=KeyboardButtonStyle(bg_success=True)
+            )
         ],
-        [styled_button("📣 کانال خرید", callback_data="buy_channel", style="success")],
-        [styled_button("📢 راهنما", callback_data="help", style="danger")]
+
+        # ردیف 3: مدیریت بات
+        [
+            InlineKeyboardButton(
+                "⚙️ مدیریت بات ⚙️",
+                callback_data="self_management",
+                style=KeyboardButtonStyle(bg_primary=True)
+            )
+        ],
+
+        # ردیف 4: راهنمای خرید
+        [
+            InlineKeyboardButton(
+                "• راهنمای خرید •",
+                callback_data="buy_guide",
+                style=KeyboardButtonStyle(bg_primary=True)
+            )
+        ],
+
+        # ردیف 5: پشتیبانی
+        [
+            InlineKeyboardButton(
+                "👨‍💻 پشتیبانی 👨‍💻",
+                callback_data="support",
+                style=KeyboardButtonStyle(bg_success=True)
+            )
+        ],
+
+        # ردیف 6: چنل ما
+        [
+            InlineKeyboardButton(
+                "📣 چنل ما 📣",
+                callback_data="buy_channel",
+                style=KeyboardButtonStyle(bg_primary=True)
+            )
+        ],
+
+        # ردیف 7: خاموش کردن سلف
+        [
+            InlineKeyboardButton(
+                "🛑 خاموش کردن سلف 🛑",
+                callback_data="stop_self",
+                style=KeyboardButtonStyle(bg_danger=True)
+            )
+        ]
     ])
 
 
@@ -1384,10 +1413,30 @@ async def callback_handler(client, callback_query):
         )
 
         keyboard = InlineKeyboardMarkup([
-            [styled_button("🔙 بازگشت", callback_data="back", style="primary")]
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
         ])
 
         await callback_query.message.edit_text(referral_text, reply_markup=keyboard)
+        await callback_query.answer()
+        return
+
+    # ==============================
+    # راهنمای خرید
+    # ==============================
+    if data == "buy_guide":
+        guide_text = (
+            "📖 **راهنمای خرید سلف**\n\n"
+            "1️⃣ روی «🛒 خرید سلف» بزنید.\n"
+            "2️⃣ تعداد سکه موردنیاز را انتخاب یا وارد کنید.\n"
+            "3️⃣ مبلغ را طبق اطلاعات پرداخت واریز کنید.\n"
+            "4️⃣ رسید پرداخت را ارسال کنید تا توسط مدیریت بررسی شود.\n\n"
+            "💡 هر 1 سکه معادل 1 ساعت زمان استفاده از سلف است."
+        )
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🛒 خرید سلف", callback_data="increase_balance", style=KeyboardButtonStyle(bg_success=True))],
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
+        ])
+        await callback_query.message.edit_text(guide_text, reply_markup=keyboard)
         await callback_query.answer()
         return
 
@@ -1405,8 +1454,8 @@ async def callback_handler(client, callback_query):
         )
 
         keyboard = InlineKeyboardMarkup([
-            [styled_button("💬 ارتباط با پشتیبانی", url=f"https://t.me/{SUPPORT_USERNAME}", style="success")],
-            [styled_button("🔙 بازگشت", callback_data="back", style="primary")]
+            [InlineKeyboardButton("💬 ارتباط با پشتیبانی", url=f"https://t.me/{SUPPORT_USERNAME}", style=KeyboardButtonStyle(bg_success=True))],
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
         ])
 
         await callback_query.message.edit_text(support_text, reply_markup=keyboard)
@@ -1427,8 +1476,8 @@ async def callback_handler(client, callback_query):
         )
 
         keyboard = InlineKeyboardMarkup([
-            [styled_button("📣 ورود به کانال", url=f"https://t.me/{BUY_CHANNEL_USERNAME}", style="success")],
-            [styled_button("🔙 بازگشت", callback_data="back", style="primary")]
+            [InlineKeyboardButton("📣 ورود به کانال", url=f"https://t.me/{BUY_CHANNEL_USERNAME}", style=KeyboardButtonStyle(bg_success=True))],
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
         ])
 
         await callback_query.message.edit_text(channel_text, reply_markup=keyboard)
@@ -1445,8 +1494,8 @@ async def callback_handler(client, callback_query):
         )
 
         keyboard = InlineKeyboardMarkup([
-            [styled_button("📖 ورود به ربات راهنما", url=f"https://t.me/{HELPER_BOT_USERNAME}", style="primary")],
-            [styled_button("🔙 بازگشت", callback_data="back", style="primary")]
+            [InlineKeyboardButton("📖 ورود به ربات راهنما", url=f"https://t.me/{HELPER_BOT_USERNAME}", style=KeyboardButtonStyle(bg_primary=True))],
+            [InlineKeyboardButton("🔙 بازگشت", callback_data="back", style=KeyboardButtonStyle(bg_primary=True))]
         ])
 
         await callback_query.message.edit_text(help_text, reply_markup=keyboard)
@@ -1618,7 +1667,7 @@ async def callback_handler(client, callback_query):
                 ])
             )
         await callback_query.answer()
-    elif data == "self_stop":
+    elif data in ("self_stop", "stop_self"):
         if stop_selfbot(user_id):
             await callback_query.message.edit_text(
                 "✅ **سلف بات با موفقیت خاموش شد!**\n\n"
@@ -1809,7 +1858,6 @@ async def handle_admin_input(client, message: Message):
         except: pass
 @bot.on_message(filters.command("start"))
 async def start_handler(client, message: Message):
-    print(f"🔥 START RECEIVED from user_id={message.from_user.id}", flush=True)
     ok, not_joined = await check_force_join(client, message.from_user.id)
     if not ok:
         buttons = []
@@ -2345,9 +2393,8 @@ def main():
         bot.run()
     except KeyboardInterrupt: 
         print("\n🛑 توقف ربات...")
-    except Exception as e:
-        print(f"❌ خطای اجرای bot.py: {e}")
-        traceback.print_exc()
+    except Exception as e: 
+        print(f"❌ خطا: {e}")
     finally: 
         stop_all_selfbots()
         print("✅ ربات متوقف شد")
